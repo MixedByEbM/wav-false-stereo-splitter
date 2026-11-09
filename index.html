@@ -4,33 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WAV False Stereo to Mono Splitter</title>
+    <!-- Include the official production build of JSZip over the web to guarantee it maps perfectly as a constructor -->
+    <script src="https://cloudflare.com"></script>
     <style>
         body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f4f7f6; color: #333; max-width: 700px; margin: 40px auto; padding: 0 20px; }
         .container { background: #fff; padding: 35px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
         h1 { margin-top: 0; font-size: 26px; color: #111; }
         p { color: #666; line-height: 1.6; }
         .drop-zone { border: 2px dashed #3182ce; background-color: #ebf8ff; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; font-weight: bold; color: #2b6cb0; margin: 25px 0; }
+        .drop-zone:hover { border-color: #2b6cb0; transform: scale(1.01); }
         .settings-frame { border: 1px solid #e2e8f0; background: #fafafa; border-radius: 8px; padding: 20px; margin-bottom: 25px; }
         .settings-title { font-weight: bold; margin-bottom: 12px; font-size: 15px; color: #2d3748; }
         .radio-group label { display: block; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
         .queue-box { border: 1px solid #cbd5e0; background: #fff; border-radius: 6px; max-height: 150px; overflow-y: auto; padding: 10px; font-family: 'Consolas', monospace; font-size: 13px; margin-bottom: 15px; }
         .queue-item { padding: 4px 0; border-bottom: 1px solid #edf2f7; color: #4a5568; }
         .action-tray { display: flex; gap: 10px; margin: 20px 0; }
-        .btn-action { flex: 1; padding: 12px; border-radius: 6px; border: none; font-weight: bold; font-size: 14px; cursor: pointer; }
+        .btn-action { flex: 1; padding: 12px; border-radius: 6px; border: none; font-weight: bold; font-size: 14px; cursor: pointer; transition: background 0.2s; }
         .btn-analyze { background-color: #2ca02c; color: white; }
+        .btn-analyze:hover { background-color: #228422; }
         .btn-zip { background-color: #0056b3; color: white; }
+        .btn-zip:hover { background-color: #004085; }
         .btn-action:disabled { background-color: #cbd5e0; color: #718096; cursor: not-allowed; }
         .log-header { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; }
         .btn-clear { background-color: #cbd5e0; color: #4a5568; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .btn-clear:hover { background-color: #a0aec0; }
         .log-box { background-color: #1a202c; color: #cdf7cd; font-family: 'Consolas', monospace; padding: 18px; border-radius: 6px; height: 220px; overflow-y: auto; font-size: 13px; white-space: pre-wrap; margin-top: 8px; }
         .download-card { background: #f0fff4; border: 1px solid #c6f6d5; padding: 12px 18px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .file-info { font-size: 13px; color: #22543d; }
         .download-btn { background-color: #38a169; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: bold; }
+        .download-btn:hover { background-color: #2f855a; }
         footer { margin-top: 40px; text-align: center; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px; color: #a0aec0; }
     </style>
-    <script>
-    !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).JSZip=e()}}(function(){return function e(t,n,r){function o(i,f){if(!n[i]){if(!t[i]){var a="function"==typeof require&&require;if(!f&&a)return a(i,!0);if(s)return s(i,!0);var u=new Error("Cannot find module '"+i+"'");throw u.code="MODULE_NOT_FOUND",u}var p=n[i]={exports:{}};t[i].call(p.exports,function(e){return o(t[i][e]||e)},p,p.exports,e,t,n,r)}return n[i].exports}for(var s="function"==typeof require&&require,i=0;i<r.length;i++)o(r[i]);return o}({1:[function(e,t,n){"use strict";function r(e){var t,n,r,o,i,f,a,p=[],c=0,h=e.length,d=s.getType(e);while(c<h)o=(t=e.charCodeAt?e.charCodeAt(c++):e[c++])>>2,i=(3&t)<<4|(n=c<h?e.charCodeAt?e.charCodeAt(c++):e[c++]:0)>>4,f=c<h?(4&n)<<2|(r=c<h?e.charCodeAt?e.charCodeAt(c++):e[c++]:0)>>6:64,a=c<h?63&r:64,c===h-1&&"string"===d&&(i=(3&t)<<4,f=64,a=64),p.push(o_chars.charAt(o)+o_chars.charAt(i)+o_chars.charAt(f)+o_chars.charAt(a));return p.join("")}var s=e("./utils"),o_chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";n.encode=r;n.decode=function(e){var t,n,r,o,i,f,a=0,p=[];e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(a<e.length)t=o_chars.indexOf(e.charAt(a++)),n=o_chars.indexOf(e.charAt(a++)),r=o_chars.indexOf(e.charAt(a++)),o=o_chars.indexOf(e.charAt(a++)),i=t<<2|n>>4,f=(15&n)<<4|r>>2,p.push(i),64!==r&&p.push(f),64!==o&&p.push(t<<2);return new Uint8Array(p)}},{"./utils":3}],2:[function(e,t,n){"use strict";function r(e,t,n){this.name=e,this._data=t,this.options=n}r.prototype={internalStream:function(){return this._data}};t.exports=r},{}],3:[function(e,t,n){"use strict";n.getType=function(e){return"string"==typeof e?"string":e instanceof Uint8Array?"uint8array":e instanceof ArrayBuffer?"arraybuffer":Array.isArray(e)?"array":"unknown"};n.transformTo=function(e,t){if(n.getType(t)===e)return t;if("string"===e){let n="";for(let r=0;r<t.length;r++)n+=String.fromCharCode(t[r]);return n}if("uint8array"===e){if("string"==typeof t){let n=new Uint8Array(t.length);for(let r=0;r<t.length;r++)n[r]=t.charCodeAt(r);return n}return new Uint8Array(t)}return t}},{}],4:[function(e,t,n){"use strict";function r(){this.files={}}var s=e("./base64"),i=e("./utils");r.prototype={file:function(e,t){this.files[e]={name:e,data:t}},generateAsync:function(e){var t=this;return new Promise(function(n){var r=new Uint8Array(1024*1024*100),o=new DataView(r.buffer),f=0,a=[];for(var u in t.files){var p=t.files[u],c=f;writeString(o,f,"PK\x03\x04");f+=4;o.setUint16(f,10,true);f+=2;o.setUint16(f,0,true);f+=2;o.setUint16(f,0,true);f+=2;o.setUint16(f,0,true);f+=2;o.setUint16(f,0,true);f+=2;var h=0;if(p.data instanceof Blob)h=p.data.size;else h=p.data.length;o.setUint32(f,0,true);f+=4;o.setUint32(f,h,true);f+=4;o.setUint32(f,h,true);f+=4;o.setUint16(f,p.name.length,true);f+=2;o.setUint16(f,0,true);f+=2;writeString(o,f,p.name);f+=p.name.length;a.push({name:p.name,size:h,offset:c});if(p.data instanceof Blob){var d=new FileReader();d.readAsArrayBuffer(p.data);d.onloadend=function(){var e=new Uint8Array(d.result);r.set(e,f);f+=e.length;if(a.length===Object.keys(t.files).length)finishZip(r,o,f,a,n)}}else{r.set(i.transformTo("uint8array",p.data),f);f+=h;}}if(Object.keys(t.files).length===0)finishZip(r,o,f,a,n)})} };function finishZip(e,t,n,r,s){var o=n;for(var i=0;i<r.length;i++){var f=r[i];writeString(t,n,"PK\x01\x02");n+=4;t.setUint16(n,20,true);n+=2;t.setUint16(n,10,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint32(n,0,true);n+=4;t.setUint32(n,f.size,true);n+=4;t.setUint32(n,f.size,true);n+=4;t.setUint16(n,f.name.length,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint32(n,0,true);n+=4;t.setUint32(n,f.offset,true);n+=4;writeString(t,n,f.name);n+=f.name.length}var i_cen=n-o;writeString(t,n,"PK\x05\x06");n+=4;t.setUint16(n,0,true);n+=2;t.setUint16(n,0,true);n+=2;t.setUint16(n,r.length,true);n+=2;t.setUint16(n,r.length,true);n+=2;t.setUint32(n,i_cen,true);n+=4;t.setUint32(n,o,true);n+=4;t.setUint16(n,0,true);n+=2;var a=new Blob([e.subarray(0,n)],{type:"application/zip"});s(a)}function writeString(e,t,n){for(var r=0;r<n.length;r++)e.setUint8(t+r,n.charCodeAt(r))}t.exports=r},{"./base64":1,"./utils":3}]},{},)(4)});
-    </script>
 </head>
 <body>
 <div class="container">
@@ -65,7 +69,6 @@
     <footer>Built with AI • Production Quality Pipeline • Pro Tools & Logic Compatible</footer>
 </div>
 <script>
-
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     const queueBox = document.getElementById('queueBox');
@@ -177,7 +180,7 @@
                     const chunkID = getString(view, 0, 4);
                     const format = getString(view, 8, 4);
                     if (chunkID !== 'RIFF' || format !== 'WAVE') {
-                        log(` -> ERROR: ${file.name} is not a valid RIFF WAV container.`);
+                        log(` -> ERROR: ${file.name} is not a standard valid RIFF WAV container.`);
                         resolve({ status: "error" });
                         return;
                     }
@@ -196,7 +199,7 @@
                     }
 
                     if (fmtOffset === -1 || dataOffset === -1) {
-                        log(` -> ERROR: Missing architectural descriptor maps.`);
+                        log(` -> ERROR: Missing architectural descriptor maps in header blocks.`);
                         resolve({ status: "error" });
                         return;
                     }
@@ -207,7 +210,7 @@
                     const bitsPerSample = view.getUint16(fmtOffset + 14, true);
 
                     if (numChannels < 2) {
-                        log(` -> Skipped: Track properties show it is already mono.`);
+                        log(` -> Skipped: Track properties show it is already 1-channel mono.`);
                         resolve({ status: "mono" });
                         return;
                     }
@@ -224,13 +227,16 @@
                         isMonoMatch = true;
                         for (let i = 0; i < totalSamples; i++) {
                             let sampleIdx = dataOffset + (i * blockAlign);
-                            if (getRawSample(view, sampleIdx, audioFormat, bytesPerSample) !== getRawSample(view, sampleIdx + bytesPerSample, audioFormat, bytesPerSample)) { isMonoMatch = false; break; }
+                            let leftByte = getRawSample(view, sampleIdx, audioFormat, bytesPerSample);
+                            let rightByte = getRawSample(view, sampleIdx + bytesPerSample, audioFormat, bytesPerSample);
+                            if (leftByte !== rightByte) { isMonoMatch = false; break; }
                         }
                     } else {
                         const startS = Math.floor(totalSamples / 4);
                         const endS = Math.min(totalSamples, startS + (sampleRate * 20));
                         
-                        let sumL = 0, sumR = 0, sumLR = 0, sumL2 = 0, sumR2 = 0, count = 0;
+                        let sumL = 0, sumR = 0, sumLR = 0, sumL2 = 0, sumR2 = 0;
+                        let count = 0;
 
                         for (let i = startS; i < endS; i++) {
                             let sampleIdx = dataOffset + (i * blockAlign);
@@ -253,7 +259,9 @@
                             isMonoMatch = true;
                             for (let i = 0; i < totalSamples; i++) {
                                 let sampleIdx = dataOffset + (i * blockAlign);
-                                if (getRawSample(view, sampleIdx, audioFormat, bytesPerSample) !== getRawSample(view, sampleIdx + bytesPerSample, audioFormat, bytesPerSample)) { isMonoMatch = false; break; }
+                                let leftByte = getRawSample(view, sampleIdx, audioFormat, bytesPerSample);
+                                let rightByte = getRawSample(view, sampleIdx + bytesPerSample, audioFormat, bytesPerSample);
+                                if (leftByte !== rightByte) { isMonoMatch = false; break; }
                             }
                         }
                     }
@@ -275,7 +283,6 @@
             reader.readAsArrayBuffer(file);
         });
     }
-
     function getRawSample(view, offset, format, bytes) {
         if (format === 3) return view.getFloat32(offset, true);
         if (bytes === 2) return view.getInt16(offset, true) / 32768;
@@ -342,6 +349,7 @@
         zipBtn.disabled = true;
         log("Packing mono WAV files into ZIP archive configuration inside local RAM...");
 
+        // Safely invoke the uncompressed cloud script constructor wrapper
         const zip = new window.JSZip();
         convertedBlobs.forEach(item => {
             zip.file(item.name, item.blob);
