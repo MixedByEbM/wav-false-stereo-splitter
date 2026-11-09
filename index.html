@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WAV False Stereo to Mono Splitter</title>
-    <!-- Web-Optimized Browser Build: Locks down the constructor instance globally -->
-    <script src="https://statically.io"></script>
     <style>
         body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f4f7f6; color: #333; max-width: 700px; margin: 40px auto; padding: 0 20px; }
         .container { background: #fff; padding: 35px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
@@ -35,11 +33,103 @@
         .download-btn:hover { background-color: #2f855a; }
         footer { margin-top: 40px; text-align: center; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px; color: #a0aec0; }
     </style>
+    <!-- Hardcoded Native Browser Exporter Module (Requires 0% Network/Internet Dependencies) -->
+    <script>
+    window.JSZip = function() {
+        function JSZipEngine() { this.files = {}; }
+        JSZipEngine.prototype.file = function(name, blobData) {
+            this.files[name] = { name: name, blob: blobData };
+        };
+        JSZipEngine.prototype.generateAsync = function() {
+            var self = this;
+            return new Promise(function(resolve) {
+                var sizeCount = 0;
+                var records = [];
+                for (var key in self.files) {
+                    var f = self.files[key];
+                    records.push({ name: f.name, data: f.blob, offset: sizeCount });
+                    sizeCount += 30 + f.name.length + f.data.size;
+                }
+                var cenOffset = sizeCount;
+                var cenSize = 0;
+                for (var i = 0; i < records.length; i++) {
+                    cenSize += 46 + records[i].name.length;
+                }
+                var totalSize = cenOffset + cenSize + 22;
+                var arrayBuffer = new ArrayBuffer(totalSize);
+                var view = new DataView(arrayBuffer);
+                var offset = 0;
+                var readPromises = records.map(function(rec) {
+                    return new Promise(function(resData) {
+                        var r = new FileReader();
+                        r.readAsArrayBuffer(rec.data);
+                        r.onloadend = function() {
+                            var rawBytes = new Uint8Array(r.result);
+                            view.setUint32(offset, 0x04034b50, true);
+                            view.setUint16(offset + 4, 10, true);
+                            view.setUint16(offset + 6, 0, true);
+                            view.setUint16(offset + 8, 0, true);
+                            view.setUint32(offset + 10, 0, true);
+                            view.setUint32(offset + 14, 0, true);
+                            view.setUint32(offset + 18, rec.data.size, true);
+                            view.setUint32(offset + 22, rec.data.size, true);
+                            view.setUint16(offset + 26, rec.name.length, true);
+                            view.setUint16(offset + 28, 0, true);
+                            for (var b = 0; b < rec.name.length; b++) {
+                                view.setUint8(offset + 30 + b, rec.name.charCodeAt(b));
+                            }
+                            new Uint8Array(arrayBuffer, offset + 30 + rec.name.length, rec.data.size).set(rawBytes);
+                            offset += 30 + rec.name.length + rec.data.size;
+                            resData();
+                        };
+                    });
+                });
+                Promise.all(readPromises).then(function() {
+                    var cenPtr = cenOffset;
+                    for (var j = 0; j < records.length; j++) {
+                        var rec = records[j];
+                        view.setUint32(cenPtr, 0x02014b50, true);
+                        view.setUint16(cenPtr + 4, 20, true);
+                        view.setUint16(cenPtr + 6, 10, true);
+                        view.setUint16(cenPtr + 8, 0, true);
+                        view.setUint16(cenPtr + 10, 0, true);
+                        view.setUint32(cenPtr + 12, 0, true);
+                        view.setUint32(cenPtr + 16, 0, true);
+                        view.setUint32(cenPtr + 20, rec.data.size, true);
+                        view.setUint32(cenPtr + 24, rec.data.size, true);
+                        view.setUint16(cenPtr + 28, rec.name.length, true);
+                        view.setUint16(cenPtr + 30, 0, true);
+                        view.setUint16(cenPtr + 32, 0, true);
+                        view.setUint16(cenPtr + 34, 0, true);
+                        view.setUint16(cenPtr + 36, 0, true);
+                        view.setUint32(cenPtr + 38, 0, true);
+                        view.setUint32(cenPtr + 42, rec.offset, true);
+                        for (var c = 0; b < rec.name.length; c++) {
+                            view.setUint8(cenPtr + 46 + c, rec.name.charCodeAt(c));
+                        }
+                        cenPtr += 46 + rec.name.length;
+                    }
+                    view.setUint32(cenPtr, 0x06054b50, true);
+                    view.setUint16(cenPtr + 4, 0, true);
+                    view.setUint16(cenPtr + 6, 0, true);
+                    view.setUint16(cenPtr + 8, records.length, true);
+                    view.setUint16(cenPtr + 10, records.length, true);
+                    view.setUint32(cenPtr + 12, cenSize, true);
+                    view.setUint32(cenPtr + 16, cenOffset, true);
+                    view.setUint16(cenPtr + 20, 0, true);
+                    var outputBlob = new Blob([arrayBuffer], { type: "application/zip" });
+                    resolve(outputBlob);
+                });
+            });
+        };
+        return JSZipEngine;
+    }();
+    </script>
 </head>
 <body>
 <div class="container">
     <h1>🎵 WAV False Stereo to Mono Splitter</h1>
-    <p>Drop your stereo WAV tracks here. Running <strong>100% locally in your browser memory</strong>. This version uses binary block architecture to retain exact original quality properties (16/24/32-bit) without compression.</p>
+    <p>Drop your stereo WAV tracks here. Running <strong>100% offline inside your local browser memory</strong>. This version uses binary block architecture to retain exact original quality properties (16/24/32-bit) without compression.</p>
     <div class="settings-frame">
         <div class="settings-title">2. Detection Sensitivity</div>
         <div class="radio-group">
@@ -180,7 +270,7 @@
                     const chunkID = getString(view, 0, 4);
                     const format = getString(view, 8, 4);
                     if (chunkID !== 'RIFF' || format !== 'WAVE') {
-                        log(` -> ERROR: ${file.name} is not a standard valid RIFF WAV container.`);
+                        log(` -> ERROR: ${file.name} is not a valid RIFF WAV container.`);
                         resolve({ status: "error" });
                         return;
                     }
@@ -349,15 +439,14 @@
         zipBtn.disabled = true;
         log("Packing mono WAV files into ZIP archive configuration inside local RAM...");
 
-        // Locks standard window context instance natively
-        const zip = new window.JSZip();
-        convertedBlobs.forEach(item => {
+        var zip = new window.JSZip();
+        convertedBlobs.forEach(function(item) {
             zip.file(item.name, item.blob);
         });
 
-        zip.generateAsync({ type: "blob" }).then((content) => {
-            const zipUrl = URL.createObjectURL(content);
-            const hiddenAnchor = document.createElement('a');
+        zip.generateAsync().then(function(content) {
+            var zipUrl = URL.createObjectURL(content);
+            var hiddenAnchor = document.createElement('a');
             hiddenAnchor.href = zipUrl;
             hiddenAnchor.download = "Mono_Exports.zip";
             document.body.appendChild(hiddenAnchor);
@@ -365,9 +454,6 @@
             document.body.removeChild(hiddenAnchor);
             
             log(" -> SUCCESS: Mono_Exports.zip successfully downloaded!");
-            zipBtn.disabled = false;
-        }).catch(err => {
-            log(` -> ZIP ERROR: ${err.message}`);
             zipBtn.disabled = false;
         });
     });
