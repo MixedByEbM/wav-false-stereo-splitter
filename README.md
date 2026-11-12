@@ -15,4 +15,3 @@ This software automatically scans WAV files using advanced Cross-Correlation Pha
 
 This tool was built collaboratively using AI to solve a real-world mixing workflow headache. Because it was born from open-source concepts, it is 100% free and open to everyone.
 • For Producers: Enjoy a completely free utility to speed up your session preparation. No hidden fees, no expiration dates, and no data tracking.
-• For Coders / Fiddlers: Want to improve the alignment math, change the interface layout, or adapt it entirely for your own custom workflow needs? Please feel free to dive into the source code! Take the Python script, break it apart, modify it, or adapt it for your own needs.
